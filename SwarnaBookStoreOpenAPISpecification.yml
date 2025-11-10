@@ -1,0 +1,364 @@
+openapi: 3.0.4
+info:
+  title: Swarna Book Store
+  description: | 
+    # Swarna Book Store has both fiction and non-fiction books
+    ## It has multiple categories
+    ### Each category has genres
+    **Swarna** book store is very ***popular*** in the town. People from all the _generations_ visit this book store nto only for the love of books but also to `socialize` and have a good time.  
+    Pipe is used to identify a multi-line description
+    This API definition focuses on the API security.
+    
+    `http methods`
+    - put
+    - post
+    - get
+    - patch
+  termsOfService: https://swagger.io/terms/
+  contact:
+    name: Swarnalata Patel
+    email: swarna@gmail.com
+    url: https://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.12
+externalDocs:
+  description: Find out more about Swagger
+  url: https://swagger.io
+servers:
+  - url: https://petstore3dev.swagger.io/api/v3
+    description: dev server
+  - url: https://petstore3int.swagger.io/api/v3  
+    description: integration server
+  - url: https://{serverName}.{port}/api/{ver}
+    variables:
+      serverName:
+        enum:
+          - perf
+          - preprod
+          - prod
+        default: perf
+      port:
+        enum:
+          - "1455"
+          - "80"
+        default: "1455"
+      version:
+        default: "v3"
+        
+security:
+  - OpenIDAuth: []
+  
+  - ApiKeyAuth: []
+  
+  - BearerAuth: []
+  
+  - BasicAuth: []
+  - OpenIDAuth: []
+  - oAuth2AuthCode:
+    - read
+    - write
+    - admin
+  
+tags:
+  - name: categories
+    description: Everything about categories
+  - name: books
+    description: Everything about books
+  - name: orders
+    description: Everything about orders
+paths:
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Return a list of categories
+      description: Return a list of catgories
+      parameters:
+        - $ref: "#/components/parameters/categoryIdQueryParameter"
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: 
+                      type: integer
+                    name:
+                      type: string
+                      
+  /categories/{categoryId}:
+    get:
+      tags:
+        - categories
+      summary: Return one category
+      description: Return only one category
+      parameters:
+        
+        - name: categoryId
+          description: The category ID
+          in: path
+          required: true
+          schema: 
+            type: object
+            properties:
+              categoryId:
+                type: integer
+      responses:
+        '200':
+          description: Only one category
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+  /books:
+    get:
+      tags:
+      - books
+      summary: Returns a list of books
+      description: Returns a list of books
+      responses:
+        '200':
+          description: Success response for returning a list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:   
+                    Id:
+                      type: integer
+                    name: 
+                      type: string
+                    price:
+                      type: number
+                  
+  /books/{id}:
+    get:
+      tags:
+        - books
+      summary: Returns a partucular book
+      description: Returns a particular book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            
+      responses:
+        '200':
+          description: success response for returning a book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  price:
+                    type: number
+              
+  /orders:
+    post:
+      tags:
+      - orders
+      summary: Create orders
+      description: Create orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                books:
+                  type: array
+                  items:
+                    type: object
+                    properties:   
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      price:
+                        type: number
+                address:
+                  type: object
+                  properties:
+                    addressLin1:
+                      type: string
+                    city:
+                      type: string
+                    country:
+                      type: string
+      responses:
+        '201':
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  objectid:
+                    type: integer
+     
+    put:
+      tags:
+      - orders
+      summary: Create orders
+      description: Create orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                books:
+                  type: array
+                  items:
+                    type: object
+                    properties: 
+                      objectid:
+                        type: integer
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      price:
+                        type: number
+                address:
+                  type: object
+                  properties:
+                    addressLin1:
+                      type: string
+                    city:
+                      type: string
+                    country:
+                      type: string
+      responses:
+        '200':
+          description: Success response
+    delete:
+      tags:
+      - orders
+      summary: Delete order
+      description: Delete order
+      parameters:
+        - name: orderId
+          in: query
+          required: true
+          schema:
+            type: integer
+            
+      responses:
+        '204':
+          description: Success response on object doesn't exist
+    
+    get:
+      tags:
+        - orders
+      summary: Retrieves an order
+      description: Retrieves an order 
+      parameters:
+        - name: orderId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Retrieves an order
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  book:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        price:
+                          type: number
+                  address:
+                    type: object
+                    properties: 
+                      addressLine1:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer  
+      bearerFormat: JWT
+  
+  
+  
+    BasicAuth:
+      type: http
+      scheme: basic
+      
+    OpenIDAuth:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/openIdConnect
+
+    oAuth2AuthCode:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://example.com/authorization
+          tokenUrl: https://example.com/token
+          scopes:
+            read: Read only access
+            write: write access
+            admin: Admin access  
+
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  
+
+
+  parameters:
+    categoryIdQueryParameter: 
+      name: categoryId
+      description: The catgory Id
+      in: query
+      schema:
+        type: integer
+        minimum: 10
+        maximum: 100
+      example: 11  
+      required: false     
+      
+      
+      
+    
+        
+                      
+                      
+    
+      
